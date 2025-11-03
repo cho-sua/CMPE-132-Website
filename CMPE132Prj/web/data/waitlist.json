@@ -1,0 +1,12 @@
+[
+    {
+        "role": "Student",
+        "email": "ja@gmail.com",
+        "firstName": "Ja",
+        "lastName": "Jo",
+        "id": "021",
+        "salt": "4a3deda67a92aec3",
+        "password": "12345576494a3deda67a92aec3",
+        "code": "JGGHMC"
+    }
+]

@@ -1,0 +1,52 @@
+[
+    {
+        "role": "Student",
+        "email": "j@gmail.com",
+        "firstName": "Jo",
+        "lastName": "Sua",
+        "id": "0126",
+        "salt": "2da80c2c51b8dde7",
+        "password": "12345576492da80c2c51b8dde7",
+        "code": "123456"
+    },
+    {
+        "role": "Librarian",
+        "email": "j@gmail.com",
+        "firstName": "Jo",
+        "lastName": "Su",
+        "id": "123",
+        "salt": "086f0f17d178ce2b",
+        "password": "123457649086f0f17d178ce2b",
+        "code": "abcdef"
+    },
+    {
+        "role": "Head Librarian",
+        "email": "j@gmail.com",
+        "firstName": "Jo",
+        "lastName": "Su",
+        "id": "123",
+        "salt": "086f0f17d178ce2b",
+        "password": "123457649086f0f17d178ce2b",
+        "code": "000000"
+    },
+    {
+        "role": "Instructor",
+        "email": "jo@gmail.com",
+        "firstName": "Jon",
+        "lastName": "Jos",
+        "id": "012",
+        "salt": "6d26cd5d4e9a07bd",
+        "password": "1234576496d26cd5d4e9a07bd",
+        "code": "JonJos"
+    },
+        {
+        "role": "IT Support",
+        "email": "jo@gmail.com",
+        "firstName": "J",
+        "lastName": "J",
+        "id": "012",
+        "salt": "6d26cd5d4e9a07bd",
+        "password": "1234576496d26cd5d4e9a07bd",
+        "code": "JonJos"
+    }
+]

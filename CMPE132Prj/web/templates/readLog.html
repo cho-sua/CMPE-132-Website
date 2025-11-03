@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}System Log{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-3">Log</h2>
+  <div class="card p-3 shadow-sm" style="max-height: 400px; overflow-y: auto;">
+    {% if logs %}
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>User</th>
+            <th>Role</th>
+            <th>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in logs %}
+          <tr>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.time }}</td>
+            <td>{{ entry.firstName }} {{ entry.lastName }}</td>
+            <td>{{ entry.role }}</td>
+            <td>{{ entry.message }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-muted">No logs available.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

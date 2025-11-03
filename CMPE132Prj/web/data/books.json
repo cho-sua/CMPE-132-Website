@@ -1,0 +1,23 @@
+[
+    {
+        "title": "h",
+        "author": "j",
+        "isbn": "1234",
+        "restricted": "Yes",
+        "copies": 7
+    },
+    {
+        "title": "J",
+        "author": "J",
+        "isbn": "0000",
+        "restricted": "No",
+        "copies": 4
+    },
+    {
+        "title": "ajsiodj",
+        "author": "wioje",
+        "isbn": "120",
+        "restricted": "Yes",
+        "copies": 1
+    }
+]
