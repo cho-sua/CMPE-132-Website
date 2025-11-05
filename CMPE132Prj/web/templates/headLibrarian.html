@@ -33,8 +33,8 @@
                 <form method="POST" class="d-inline ms-2">
                   <input type="text" name="userID" placeholder="Student ID" class="form-control form-control-sm d-inline-block" style="width: 120px;" required>
                   {% if book.restricted == "Restricted" or book.restricted == "Yes" %}
-                    <button formaction="{{ url_for('views.addRestrictions', isbn=book.isbn) }}" type="submit" class="btn btn-success btn-sm">Approve</button>
-                    <button formaction="{{ url_for('views.removeRestrictions', isbn=book.isbn) }}" type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    <button formaction="{{ url_for('views.addRestrictions', isbn=book.isbn) }}" type="submit" class="btn btn-success btn-sm">Grant Access</button>
+                    <button formaction="{{ url_for('views.removeRestrictions', isbn=book.isbn) }}" type="submit" class="btn btn-danger btn-sm">Deny</button>
                   {% endif %}
                   <button formaction="{{ url_for('views.assignToUser', isbn=book.isbn) }}" type="submit" class="btn btn-success btn-sm">Assign</button>
                 </form>

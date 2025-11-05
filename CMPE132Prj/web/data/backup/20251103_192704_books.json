@@ -4,14 +4,14 @@
         "author": "j",
         "isbn": "1234",
         "restricted": "Yes",
-        "copies": 2
+        "copies": 4
     },
     {
         "title": "J",
         "author": "J",
         "isbn": "0000",
         "restricted": "No",
-        "copies": 1
+        "copies": 4
     },
     {
         "title": "ajsiodj",

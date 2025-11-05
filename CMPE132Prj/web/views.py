@@ -93,16 +93,6 @@ def home():
 
 @views.route('/loginHome')
 def loginHome():
-    info = {
-        "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
-        "userID": session.get('id'),
-        "firstName": session.get('firstName'),
-        "lastName": session.get('lastName'),
-        "email": session.get('email'),
-        "role": session.get('role'),
-        "message": "User login" 
-    }
-    addLog(info)
     role = session.get('role')
     if not role:
         return redirect(url_for('auth.login'))
@@ -188,7 +178,7 @@ def instructorHome():
 
 @views.route('/borrow/<isbn>')
 def borrowBook(isbn):
-    if session.get('role') != 'Student':
+    if session.get('role') != 'Student' and session.get('role' != 'Instructor'):
         flash('Access denied.', category = 'error')
         return redirect(url_for('views.loginHome'))
 
@@ -201,6 +191,16 @@ def borrowBook(isbn):
         flash('Book unavailable.', category = 'error')
         return redirect(url_for('views.loginHome'))
 
+    info = {
+        "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+        "userID": session.get('id'),
+        "firstName": session.get('firstName'),
+        "lastName": session.get('lastName'),
+        "email": session.get('email'),
+        "role": session.get('role'),
+        "message": f"User borrowed book with isbn: {isbn}"
+    }
+    addLog(info)
     book['copies'] -= 1
     borrowed.append({'userID': userID, 'isbn': isbn, 'title': book['title']})
 
@@ -212,7 +212,7 @@ def borrowBook(isbn):
 
 @views.route('/return/<isbn>')
 def returnBook(isbn):
-    if session.get('role') != 'Student':
+    if session.get('role') != 'Student' and session.get('role' != 'Instructor'):
         flash('Access denied.', category = 'error')
         return redirect(url_for('views.loginHome'))
 
@@ -232,6 +232,16 @@ def returnBook(isbn):
     if book:
         book['copies'] += 1
 
+    info = {
+        "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+        "userID": session.get('id'),
+        "firstName": session.get('firstName'),
+        "lastName": session.get('lastName'),
+        "email": session.get('email'),
+        "role": session.get('role'),
+        "message": f"User returned book with isbn: {isbn}"
+    }
+    addLog(info)
     saveBooks(books)
     saveBorrowed(borrowed)
 
@@ -264,6 +274,17 @@ def addBook():
                 })
                 flash(f'Book "{title}" added successfully!', category = 'success')
 
+                info = {
+                    "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+                    "userID": session.get('id'),
+                    "firstName": session.get('firstName'),
+                    "lastName": session.get('lastName'),
+                    "email": session.get('email'),
+                    "role": session.get('role'),
+                    "message": f"User added book with isbn: {isbn}"
+                }
+                addLog(info)
+
             saveBooks(books)
             return redirect(url_for('views.loginnHome'))
 
@@ -281,6 +302,16 @@ def removeBook():
         isbn = request.form.get('isbn')
         books = [b for b in books if b['isbn'] != isbn]
         saveBooks(books)
+        info = {
+            "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+            "userID": session.get('id'),
+            "firstName": session.get('firstName'),
+            "lastName": session.get('lastName'),
+            "email": session.get('email'),
+            "role": session.get('role'),
+            "message": f"User removed book with isbn: {isbn}"
+        }
+        addLog(info)
         flash(f'Book with ISBN {isbn} removed.', category = 'success')
         return redirect(url_for('views.loginHome'))
 
@@ -304,6 +335,16 @@ def editBook(isbn):
         book['restricted'] = request.form.get('restricted')
         book['copies'] = int(request.form.get('copies'))
         saveBooks(books)
+        info = {
+            "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+            "userID": session.get('id'),
+            "firstName": session.get('firstName'),
+            "lastName": session.get('lastName'),
+            "email": session.get('email'),
+            "role": session.get('role'),
+            "message": f"User edited book with isbn: {isbn}"
+        }
+        addLog(info)
         flash('Book updated successfully!', category = 'success')
         return redirect(url_for('views.loginHome'))
 
@@ -332,6 +373,16 @@ def addRestrictions(isbn):
     else:
         restrictions.append({'userID': userID, 'isbn': isbn})
         saveRestrictions(restrictions)
+        info = {
+            "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+            "userID": session.get('id'),
+            "firstName": session.get('firstName'),
+            "lastName": session.get('lastName'),
+            "email": session.get('email'),
+            "role": session.get('role'),
+            "message": f"User granted access to book with isbn: {isbn}, to user with ID: {userID}"
+        }
+        addLog(info)
         flash('Access granted!', category = 'success')
     return redirect(url_for('views.loginHome'))
 
@@ -358,14 +409,24 @@ def removeRestrictions(isbn):
         restrictions.remove(existingUser)
         saveRestrictions(restrictions)
         flash('Successfully removed!', category = 'success')
+        info = {
+            "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+            "userID": session.get('id'),
+            "firstName": session.get('firstName'),
+            "lastName": session.get('lastName'),
+            "email": session.get('email'),
+            "role": session.get('role'),
+            "message": f"User removed access to book with isbn: {isbn}, to user with ID: {userID}"
+        }
+        addLog(info)
     else:
         flash('No user found!', category = 'error')
     return redirect(url_for('views.loginHome'))
 
 @views.route('/assign_to_user/<isbn>', methods=['GET', 'POST'])
 def assignToUser(isbn):
-    if session.get('role') != 'Librarian' and session.get('role') != 'Head Librarian':
-        flash('Access denied: Librarians only.', category = 'error')
+    if session.get('role') != 'Librarian' and session.get('role') != 'Head Librarian' and session.get('role') != 'Instructor':
+        flash('Access denied!', category = 'error')
         return redirect(url_for('views.loginHome'))
 
     userID = request.form.get('userID')
@@ -399,6 +460,16 @@ def assignToUser(isbn):
             book['copies'] -= 1
             saveBooks(books)
             saveBorrowed(borrowed)
+            info = {
+                "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+                "userID": session.get('id'),
+                "firstName": session.get('firstName'),
+                "lastName": session.get('lastName'),
+                "email": session.get('email'),
+                "role": session.get('role'),
+                "message": f"User assigned book with isbn: {isbn}, to user with ID: {userID}"
+            }
+            addLog(info)
             flash('User assigned to book!', category = 'success')
             return redirect(url_for('views.loginHome'))
     flash('No user found!/Out of copies!', category = 'error')
@@ -424,20 +495,50 @@ def approve():
             saveAcc(accounts)
             waitlist.remove(user)
             saveWait(waitlist)
+            info = {
+                "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+                "userID": session.get('id'),
+                "firstName": session.get('firstName'),
+                "lastName": session.get('lastName'),
+                "email": session.get('email'),
+                "role": session.get('role'),
+                "message": f"User approved user with ID: {user['id']}"
+            }
+            addLog(info)
             flash(f"Approved {user['firstName']} {user['lastName']}!", category='success')
         elif action == 'reject':
             waitlist.remove(user)
             saveWait(waitlist)
+            info = {
+                "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+                "userID": session.get('id'),
+                "firstName": session.get('firstName'),
+                "lastName": session.get('lastName'),
+                "email": session.get('email'),
+                "role": session.get('role'),
+                "message": f"User disapproved user with ID: {user['id']}"
+            }
+            addLog(info)
             flash(f"Rejected {user['firstName']} {user['lastName']}.", category='error')
         waitlist = loadWait()
     books = loadBooks()
-    return render_template('headLibrarian.html', books=books, waitlist=waitlist, role=session.get('role'))
+    return redirect(url_for('views.loginHome'))
 
 @views.route('/readLog', methods = ['GET', 'POST'])
 def readLog():
     if session.get('role') != 'IT Support':
         flash('Access denied!', category='error')
         return redirect(url_for('views.loginHome'))
+    info = {
+        "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+        "userID": session.get('id'),
+        "firstName": session.get('firstName'),
+        "lastName": session.get('lastName'),
+        "email": session.get('email'),
+        "role": session.get('role'),
+        "message": f"User with ID: {session.get('id')}, accessed logs"
+    }
+    addLog(info)
     logs = loadLog()
     return render_template('readLog.html', logs = logs)
 
@@ -464,6 +565,15 @@ def saveBackup():
             backup_path = os.path.join(backup_folder, f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{name}")
             with open(path, 'r') as f_src, open(backup_path, 'w') as f_dst:
                 f_dst.write(f_src.read())
-
+    info = {
+        "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+        "userID": session.get('id'),
+        "firstName": session.get('firstName'),
+        "lastName": session.get('lastName'),
+        "email": session.get('email'),
+        "role": session.get('role'),
+        "message": f"User with ID: {session.get('id')}, saved a backup"
+    }
+    addLog(info)
     flash('Backup saved!', category='success')
     return redirect(url_for('views.itHome'))

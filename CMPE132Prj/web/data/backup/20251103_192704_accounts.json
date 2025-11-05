@@ -51,6 +51,16 @@
     },
     {
         "role": "Student",
+        "email": "j@gmail.com",
+        "firstName": "Jos",
+        "lastName": "Hua",
+        "id": "12345",
+        "salt": "579ed51236cb78c7",
+        "password": "123457649579ed51236cb78c7",
+        "code": "99WPVZ"
+    },
+    {
+        "role": "Student",
         "email": "ja@gmail.com",
         "firstName": "Ja",
         "lastName": "Jo",

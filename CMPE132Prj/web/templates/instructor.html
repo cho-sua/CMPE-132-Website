@@ -19,8 +19,10 @@
                 {% else %}
                     <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
                 {% endif %}
-                <input type="text" name="userID" placeholder="Student ID" class="form-control form-control-sm d-inline-block" style="width: 120px;" required>
-                <button formaction="{{ url_for('views.assignToUser', isbn=book.isbn) }}" type="submit" class="btn btn-success btn-sm">Assign</button>
+                <form method="POST" class="d-inline ms-2">
+                    <input type="text" name="userID" placeholder="Student ID" class="form-control form-control-sm d-inline-block" style="width: 120px;" required>
+                    <button formaction="{{ url_for('views.assignToUser', isbn=book.isbn) }}" type="submit" class="btn btn-success btn-sm">Assign</button>
+                </form>
             </div>
             {% endfor %}
         {% else %}

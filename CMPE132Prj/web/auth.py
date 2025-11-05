@@ -1,10 +1,32 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 import json, os, random, string
 from .hashing import hashFun, verify
+from datetime import datetime
 
 auth = Blueprint('auth', __name__)
 accFile = os.path.join(os.path.dirname(__file__), 'data', 'accounts.json')
 waitFile = os.path.join(os.path.dirname(__file__), 'data', 'waitlist.json')
+log = os.path.join(os.path.dirname(__file__), 'data', 'log.json')
+
+def loadLog():
+    if not os.path.exists(log):
+        with open(log, "w") as f:
+            json.dump([], f)
+
+    with open(log, "r") as f:
+        try:
+            data = json.load(f)
+            if not isinstance(data, list):
+                data = []
+        except json.JSONDecodeError:
+            data = []
+    return data
+
+def addLog(info):
+    data = loadLog()
+    data.append(info)
+    with open(log, 'w') as f:
+        json.dump(data, f, indent = 4)
 
 def ranCodeGen(length = 6):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k= length))
@@ -63,6 +85,16 @@ def login():
                             session['id'] = acc['id']
                             session['firstName'] = acc['firstName']
                             session['lastName'] = acc['lastName']
+                            info = {
+                                "time": datetime.now().strftime("%H:%M:%S"), "date": datetime.now().strftime("%Y-%m-%d"),
+                                "userID": session.get('id'),
+                                "firstName": session.get('firstName'),
+                                "lastName": session.get('lastName'),
+                                "email": session.get('email'),
+                                "role": session.get('role'),
+                                "message": "User login" 
+                            }
+                            addLog(info)
                             flash(f'Login Successful! Welcome back, {acc["firstName"]}!', category = 'success')
                             return redirect(url_for("views.loginHome"))
                         else:
@@ -70,11 +102,7 @@ def login():
                             break
             flash('No account was found!', category = 'error')
     return render_template("login.html")
-"""
-@auth.route('/logout')
-def logout():
-        return "<p>logout</p>"
-"""
+
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
       if request.method == 'POST':
@@ -94,33 +122,35 @@ def sign_up():
             flash('No first name input detected!', category = 'error')
         elif len(lastName) < 1:
             flash('No last name input detected!', category = 'error')
-        elif len(password1) < 1:
-            flash('No password input detected!', category = 'error')
-        elif len(password2) < 1:
-            flash('No password confirmation input detected!', category = 'error')
+        elif len(password1) < 4:
+            flash('Too short!', category = 'error')
+        elif len(password2) < 4:
+            flash('Too short!', category = 'error')
         elif password1 != password2:
             flash('Passwords do not match!', category = 'error')
         else:
             account = loadAcc()
             list = loadWait()
-            if any(acc['email'] == email and acc['role'] == role for acc in account):
+            role_map = {
+                'role1': 'Student',
+                'role2': 'Instructor',
+                'role3': 'Librarian',
+                'role4': 'Head Librarian',
+                'role5': 'IT Support'
+            }
+            roleGet = role_map.get(role, 'Unknown')
+            if any(acc['email'] == email and acc['role'] == roleGet for acc in account):
                 flash('Account already registered with email', category='error')
-            elif  any(acc['email'] == email and acc['role'] == role for acc in list):
+            elif any(acc['id'] == id and acc['role'] == roleGet for acc in account):
+                flash('Account already registered with email', category='error')
+            elif  any(acc['email'] == email and acc['role'] == roleGet for acc in list):
                 flash('Account waiting to be approved!', category = 'success')
             else:   
-                role_map = {
-                    'role1': 'Student',
-                    'role2': 'Instructor',
-                    'role3': 'Librarian',
-                    'role4': 'Head Librarian',
-                    'role5': 'IT Support'
-                }
-
                 hash, salt = hashFun(password1)
 
                 code = ranCodeGen()
                 newAccount = {
-                    'role': role_map.get(role, 'Unknown'),
+                    'role': roleGet,
                     'email': email,
                     'firstName': firstName,
                     'lastName': lastName,

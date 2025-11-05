@@ -1,12 +1,12 @@
 [
     {
-        "role": "Student",
+        "role": "IT Support",
         "email": "ja@gmail.com",
-        "firstName": "Ja",
-        "lastName": "Jo",
-        "id": "021",
-        "salt": "4a3deda67a92aec3",
-        "password": "12345576494a3deda67a92aec3",
-        "code": "JGGHMC"
+        "firstName": "JO",
+        "lastName": "JO",
+        "id": "0000",
+        "salt": "e7ab7f67185301d4",
+        "password": "000053328e7ab7f67185301d4",
+        "code": "6WCMOK"
     }
 ]
